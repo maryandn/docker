@@ -1,0 +1,31 @@
+version: "3.7"
+
+services:
+  app:
+    build:
+      context: .
+    ports:
+    - 8000:8000
+    volumes:
+    - ./epg_django:/app
+    environment:
+      - DB_NAME=epg_db
+      - MYSQL_USER=docker-user
+      - MYSQL_PASSWORD=test
+      - SECRET_KEY=Er8nyD~&!4B^e6H4!#N~m4t8VCrL^f27
+    restart: unless-stopped
+    depends_on:
+      - db
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: 'epg_db'
+      MYSQL_USER: 'docker-user'
+      MYSQL_PASSWORD: 'test'
+      MYSQL_ROOT_PASSWORD: 'superpassword'
+    restart: always
+    volumes:
+    - ./db_django:/var/lib/mysql
