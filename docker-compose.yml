@@ -1,13 +1,24 @@
-version: "3.7"
+version: "3.3"
 
 services:
+  nginx:
+    build: ./nginx
+    container_name: ng01
+    ports:
+      - 1300:80
+    volumes:
+      - static:/app/static
+    depends_on:
+      - app
+
   app:
     build:
       context: .
-    ports:
-    - 8000:8000
+    expose:
+      - 8000
     volumes:
-    - ./epg_django:/app
+      - ./epg_django:/app
+      - static:/app/static
     environment:
       - DB_NAME=epg_db
       - MYSQL_USER=docker-user
@@ -29,3 +40,5 @@ services:
     restart: always
     volumes:
     - ./db_django:/var/lib/mysql
+volumes:
+  static:
